@@ -5,6 +5,9 @@
   "description": "Happy Birthday Neeta Maa - A heartfelt celebration from Manali",
   "scripts": {
     "start": "node scripts/local-server.js",
-    "build": "echo 'Static deployment ready'"
+    "build": "node scripts/build.js"
+  },
+  "dependencies": {
+    "esbuild": "^0.28.2"
   }
 }

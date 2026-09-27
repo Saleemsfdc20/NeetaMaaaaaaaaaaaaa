@@ -6,9 +6,10 @@
   <meta name="theme-color" content="#04060f" />
   <title>Happy Birthday, Meri Maa ♥</title>
 
-  <!-- Fonts -->
+  <!-- Preconnect to Fonts & CDNs for instant mobile loading -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://esm.sh" />
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Great+Vibes&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
 
   <!-- Tailwind CSS -->
@@ -33,10 +34,25 @@
   </script>
 
   <style>
-    html { scrollbar-gutter: stable; background: #03050d; }
-    body { background: #03050d; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-    body.locked { overflow: hidden; }
-    ::selection { background: rgba(255, 143, 171, .35); color: #fff; }
+    html {
+      scrollbar-gutter: stable;
+      background: #03050d;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      background: #03050d;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    body.locked {
+      overflow: hidden;
+      touch-action: none;
+    }
+    ::selection {
+      background: rgba(255, 143, 171, .35);
+      color: #fff;
+    }
 
     /* Shimmering gold text */
     .gold-text {
@@ -49,16 +65,30 @@
       color: transparent;
       animation: shimmer 7s ease-in-out infinite;
     }
-    @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    @keyframes shimmer {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
 
-    /* Film grain for a cinematic texture (desktop only for buttery mobile performance) */
+    /* Film grain for cinematic texture (desktop only for 60/120fps mobile performance) */
     @media (min-width: 769px) {
       .grain::after {
-        content: ""; position: fixed; inset: -50%; pointer-events: none; z-index: 60; opacity: .05;
+        content: "";
+        position: fixed;
+        inset: -50%;
+        pointer-events: none;
+        z-index: 60;
+        opacity: .04;
         background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
         animation: grain 1.2s steps(6) infinite;
       }
-      @keyframes grain { 0%{transform:translate(0,0)} 25%{transform:translate(-3%,2%)} 50%{transform:translate(2%,-3%)} 75%{transform:translate(-2%,-1%)} 100%{transform:translate(0,0)} }
+      @keyframes grain {
+        0% { transform: translate(0,0) }
+        25% { transform: translate(-3%,2%) }
+        50% { transform: translate(2%,-3%) }
+        75% { transform: translate(-2%,-1%) }
+        100% { transform: translate(0,0) }
+      }
     }
 
     /* Vinyl grooves */
@@ -70,922 +100,85 @@
     }
 
     /* Seek bar */
-    input[type=range].seek { -webkit-appearance: none; appearance: none; background: transparent; width: 100%; height: 18px; cursor: pointer; }
-    input[type=range].seek::-webkit-slider-runnable-track { height: 3px; border-radius: 9px; background: linear-gradient(90deg, #f5d48c var(--p,0%), rgba(255,255,255,.12) var(--p,0%)); }
-    input[type=range].seek::-moz-range-track { height: 3px; border-radius: 9px; background: rgba(255,255,255,.12); }
-    input[type=range].seek::-moz-range-progress { height: 3px; border-radius: 9px; background: #f5d48c; }
-    input[type=range].seek::-webkit-slider-thumb { -webkit-appearance: none; margin-top: -5px; width: 13px; height: 13px; border-radius: 50%; background: #fff6dc; box-shadow: 0 0 12px #f5d48c, 0 0 24px rgba(255,182,193,.6); }
-    input[type=range].seek::-moz-range-thumb { width: 13px; height: 13px; border: 0; border-radius: 50%; background: #fff6dc; box-shadow: 0 0 12px #f5d48c; }
+    input[type=range].seek {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      width: 100%;
+      height: 18px;
+      cursor: pointer;
+    }
+    input[type=range].seek::-webkit-slider-runnable-track {
+      height: 3px;
+      border-radius: 9px;
+      background: linear-gradient(90deg, #f5d48c var(--p,0%), rgba(255,255,255,.12) var(--p,0%));
+    }
+    input[type=range].seek::-moz-range-track {
+      height: 3px;
+      border-radius: 9px;
+      background: rgba(255,255,255,.12);
+    }
+    input[type=range].seek::-moz-range-progress {
+      height: 3px;
+      border-radius: 9px;
+      background: #f5d48c;
+    }
+    input[type=range].seek::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      margin-top: -5px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: #fff6dc;
+      box-shadow: 0 0 12px #f5d48c, 0 0 24px rgba(255,182,193,.6);
+    }
+    input[type=range].seek::-moz-range-thumb {
+      width: 13px;
+      height: 13px;
+      border: 0;
+      border-radius: 50%;
+      background: #fff6dc;
+      box-shadow: 0 0 12px #f5d48c;
+    }
 
-    .caret { display: inline-block; width: 2px; height: 1em; margin-left: 3px; vertical-align: -0.12em; background: #f5d48c; box-shadow: 0 0 10px #f5d48c; animation: blink 1s steps(1) infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
+    .caret {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      margin-left: 3px;
+      vertical-align: -0.12em;
+      background: #f5d48c;
+      box-shadow: 0 0 10px #f5d48c;
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
 
-    @media (prefers-reduced-motion: reduce) { .grain::after, .gold-text { animation: none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .grain::after, .gold-text { animation: none; }
+    }
   </style>
 
-  <!-- React + Framer Motion via ES modules -->
+  <!-- React 18 + Framer Motion Import Map (Fast native ES modules) -->
   <script type="importmap">
   {
     "imports": {
       "react": "https://esm.sh/react@18.3.1",
       "react/": "https://esm.sh/react@18.3.1/",
       "react-dom": "https://esm.sh/react-dom@18.3.1",
+      "react-dom/client": "https://esm.sh/react-dom@18.3.1/client",
       "react-dom/": "https://esm.sh/react-dom@18.3.1/",
       "framer-motion": "https://esm.sh/framer-motion@11.11.17?external=react,react-dom"
     }
   }
   </script>
-  <script src="https://unpkg.com/@babel/standalone@7.25.6/babel.min.js"></script>
 </head>
 
 <body class="locked grain font-sans text-white antialiased">
   <div id="root"></div>
 
-  <script type="text/babel" data-type="module" data-presets="react">
-    import React, { useEffect, useRef, useState, useMemo } from "react";
-    import { createRoot } from "react-dom/client";
-    import { motion, AnimatePresence, useMotionValue, useSpring, useTransform, useInView, useScroll } from "framer-motion";
-
-    /* ==========================================================================
-       ✦ PERSONALISE HERE ✦
-       Neeta maa's photo and Manali's voice note are embedded right in this folder!
-       Quote timings are synchronized to Manali's exact spoken words in the audio.
-       ========================================================================== */
-    const CONFIG = {
-      photo: "neeta.jpg",
-      audio: "voice-note.mp3",
-      fallbackAudio: "voice-note.ogg",
-      quotes: [
-        { text: "Two strangers sitting beside each other on a bus... who turned into family and my maa ♥", at: 10 },
-        { text: "From strangers to so deeply connected — forever grateful for the bond we found in each other.", at: 27 },
-        { text: "Look back at everything you survived, everything that tried to break you, but you kept going.", at: 44 },
-        { text: "May this chapter bring you healing, happiness, and all the love your heart deserved. I love you.", at: 120 },
-      ],
-      blessing:
-        "Neeta maa, on your birthday I wish you all the love you have so selflessly given to everyone else... " +
-        "all the happiness your heart has waited so patiently for... all the peace your soul deserves after every storm... " +
-        "and all the respect you have earned by surviving everything that tried to break you. " +
-        "May this year close the chapter of pain and open the most beautiful chapter of your life — healed, held, and endlessly loved.",
-    };
-
-    /* ---------------------------------- utils ---------------------------------- */
-    const rand = (a, b) => a + Math.random() * (b - a);
-    const pick = (arr) => arr[(Math.random() * arr.length) | 0];
-    const GOLDS = ["255,214,140", "255,190,95", "255,236,190", "240,180,80"];
-    const ROSES = ["255,182,193", "255,143,171", "255,205,215", "232,99,138"];
-    const fmt = (s) => { if (!isFinite(s) || isNaN(s)) return "0:00"; const m = Math.floor(s / 60); const r = Math.floor(s % 60); return `${m}:${r < 10 ? "0" : ""}${r}`; };
-    const reduceMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    function heartPath(ctx, s) {
-      ctx.beginPath();
-      ctx.moveTo(0, s * 0.35);
-      ctx.bezierCurveTo(-s * 0.05, s * 0.3, -s * 0.5, s * 0.05, -s * 0.5, -s * 0.2);
-      ctx.bezierCurveTo(-s * 0.5, -s * 0.45, -s * 0.2, -s * 0.55, 0, -s * 0.3);
-      ctx.bezierCurveTo(s * 0.2, -s * 0.55, s * 0.5, -s * 0.45, s * 0.5, -s * 0.2);
-      ctx.bezierCurveTo(s * 0.5, s * 0.05, s * 0.05, s * 0.3, 0, s * 0.35);
-      ctx.closePath();
-    }
-
-    function useWindowWidth() {
-      const [w, setW] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
-      useEffect(() => { const on = () => setW(window.innerWidth); window.addEventListener("resize", on); return () => window.removeEventListener("resize", on); }, []);
-      return w;
-    }
-
-    /* ========================================================================
-       FX ENGINE — golden dust bursts + ethereal rising hearts (top layer)
-       ======================================================================== */
-    const FX = {
-      p: [],
-      burst(x, y) {
-        const n = reduceMotion ? 40 : 110;
-        for (let i = 0; i < n; i++) {
-          const a = rand(0, Math.PI * 2), sp = Math.pow(Math.random(), 0.6) * rand(2, 9);
-          this.p.push({ t: "dust", x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 1.0, r: rand(0.6, 2.2), c: Math.random() < 0.8 ? pick(GOLDS) : pick(ROSES), age: 0, life: rand(80, 160), ph: rand(0, 6.28) });
-        }
-        for (let i = 0; i < (reduceMotion ? 8 : 24); i++) {
-          const a = rand(-Math.PI, 0), sp = rand(1, 4.5);
-          this.p.push({ t: "heart", x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, s: rand(10, 24), c: Math.random() < 0.65 ? pick(ROSES) : pick(GOLDS), age: 0, life: rand(220, 360), ph: rand(0, 6.28), rot: rand(-0.3, 0.3) });
-        }
-        this.p.push({ t: "ring", x, y, r: 10, age: 0, life: 60 });
-      },
-      rise(n = 3) {
-        const W = window.innerWidth, H = window.innerHeight;
-        for (let i = 0; i < n; i++)
-          this.p.push({ t: "heart", x: rand(0, W), y: H + 30, vx: rand(-0.3, 0.3), vy: rand(-1.4, -0.6), s: rand(8, 22), c: Math.random() < 0.7 ? pick(ROSES) : pick(GOLDS), age: 0, life: rand(380, 560), ph: rand(0, 6.28), rot: rand(-0.3, 0.3) });
-      },
-      pop(x, y, big = false) {
-        for (let i = 0; i < (big ? 60 : 14); i++) {
-          const a = rand(0, 6.28), sp = rand(0.8, big ? 6 : 3.2);
-          this.p.push({ t: "dust", x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 0.6, r: rand(0.5, 2), c: pick(GOLDS), age: 0, life: rand(50, 110), ph: rand(0, 6.28) });
-        }
-        for (let i = 0; i < (big ? 22 : 4); i++)
-          this.p.push({ t: "heart", x, y, vx: rand(-2, 2), vy: rand(-3.5, -1), s: rand(8, big ? 24 : 16), c: pick(ROSES), age: 0, life: rand(160, 280), ph: rand(0, 6.28), rot: rand(-0.3, 0.3) });
-      },
-    };
-
-    function FXCanvas() {
-      const ref = useRef(null);
-      useEffect(() => {
-        const c = ref.current, ctx = c.getContext("2d");
-        let raf, dpr = 1;
-        const isMobile = window.innerWidth < 768;
-        const resize = () => {
-          dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
-          c.width = innerWidth * dpr;
-          c.height = innerHeight * dpr;
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        };
-        resize(); window.addEventListener("resize", resize);
-        const loop = () => {
-          const P = FX.p;
-          if (P.length === 0) {
-            ctx.clearRect(0, 0, c.width, c.height);
-            raf = requestAnimationFrame(loop);
-            return;
-          }
-          ctx.clearRect(0, 0, c.width, c.height);
-          ctx.globalCompositeOperation = "lighter";
-          for (let i = P.length - 1; i >= 0; i--) {
-            const p = P[i]; p.age++;
-            if (p.age > p.life) { P.splice(i, 1); continue; }
-            if (p.age < 0) continue;
-            const k = p.age / p.life;
-            if (p.t === "dust") {
-              p.vx *= 0.972; p.vy = p.vy * 0.972 + 0.025; p.x += p.vx; p.y += p.vy;
-              const a = (1 - k) * (0.55 + 0.45 * Math.sin(p.age * 0.35 + p.ph));
-              ctx.fillStyle = `rgba(${p.c},${a * 0.12})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, 6.283); ctx.fill();
-              ctx.fillStyle = `rgba(${p.c},${a})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
-            } else if (p.t === "heart") {
-              p.vx *= 0.985; p.vy = Math.max(p.vy * 0.99 - 0.012, -1.7);
-              p.x += p.vx + Math.sin(p.age * 0.03 + p.ph) * 0.45; p.y += p.vy;
-              const fadeIn = Math.min(1, p.age / 18), a = fadeIn * (k < 0.55 ? 1 : 1 - (k - 0.55) / 0.45);
-              ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot + Math.sin(p.age * 0.02 + p.ph) * 0.2);
-              ctx.fillStyle = `rgba(${p.c},${a * 0.75})`; heartPath(ctx, p.s); ctx.fill();
-              ctx.restore();
-            } else if (p.t === "ring") {
-              p.r += (Math.max(innerWidth, innerHeight) * 0.9 - p.r) * 0.045;
-              ctx.strokeStyle = `rgba(255,220,160,${(1 - k) * 0.55})`; ctx.lineWidth = 2 * (1 - k) + 0.5;
-              ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.stroke();
-            }
-          }
-          raf = requestAnimationFrame(loop);
-        };
-        loop();
-        return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
-      }, []);
-      return <canvas ref={ref} className="pointer-events-none fixed inset-0 z-50 h-full w-full" />;
-    }
-
-    /* ========================================================================
-       AMBIENT SKY — twinkling stars, drifting embers, shooting stars (bg)
-       ======================================================================== */
-    function AmbientSky() {
-      const ref = useRef(null);
-      useEffect(() => {
-        const c = ref.current, ctx = c.getContext("2d");
-        let raf, w, h, stars = [], embers = [], shoots = [];
-        const isMobile = window.innerWidth < 768;
-        const ember = (init) => ({ x: rand(0, w), y: init ? rand(0, h) : h + 10, r: rand(0.6, 2.0), vy: rand(0.15, 0.5), ph: rand(0, 6.28), sw: rand(0.3, 1), c: Math.random() < 0.55 ? pick(GOLDS) : pick(ROSES), a: rand(0.3, 0.8) });
-        const resize = () => {
-          const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
-          w = innerWidth; h = innerHeight;
-          c.width = w * dpr; c.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-          const numStars = isMobile ? 40 : Math.round((w * h) / 7000);
-          const numEmbers = isMobile ? 18 : Math.round(Math.min(90, (w * h) / 14000));
-          stars = Array.from({ length: numStars }, () => ({ x: rand(0, w), y: rand(0, h), r: rand(0.2, 1.2), p: rand(0, 6.28), s: rand(0.4, 1.6) }));
-          embers = Array.from({ length: numEmbers }, () => ember(true));
-        };
-        resize(); window.addEventListener("resize", resize);
-        const loop = (t = 0) => {
-          ctx.clearRect(0, 0, w, h);
-          for (const s of stars) {
-            const a = 0.15 + 0.6 * (0.5 + 0.5 * Math.sin(t * 0.001 * s.s + s.p));
-            ctx.fillStyle = `rgba(220,228,255,${a})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill();
-          }
-          ctx.globalCompositeOperation = "lighter";
-          for (let i = 0; i < embers.length; i++) {
-            const e = embers[i];
-            e.y -= e.vy; e.x += Math.sin(t * 0.0006 * e.sw + e.ph) * 0.35;
-            if (e.y < -12) embers[i] = ember(false);
-            const fl = e.a * (0.6 + 0.4 * Math.sin(t * 0.004 + e.ph)) * Math.min(1, e.y / (h * 0.25));
-            ctx.fillStyle = `rgba(${e.c},${fl * 0.8})`; ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, 6.283); ctx.fill();
-          }
-          if (!isMobile && Math.random() < 0.005) {
-            shoots.push({ x: rand(-0.1 * w, w * 0.8), y: rand(-20, h * 0.35), vx: rand(6, 10), vy: rand(2.5, 4.5), life: rand(50, 80), age: 0 });
-          }
-          for (let i = shoots.length - 1; i >= 0; i--) {
-            const s = shoots[i]; s.age++; s.x += s.vx; s.y += s.vy;
-            if (s.age > s.life) { shoots.splice(i, 1); continue; }
-            const a = Math.sin((s.age / s.life) * Math.PI);
-            const g = ctx.createLinearGradient(s.x, s.y, s.x - s.vx * 14, s.y - s.vy * 14);
-            g.addColorStop(0, `rgba(255,240,210,${a})`); g.addColorStop(1, "rgba(255,240,210,0)");
-            ctx.strokeStyle = g; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(s.x, s.y); ctx.lineTo(s.x - s.vx * 14, s.y - s.vy * 14); ctx.stroke();
-          }
-          ctx.globalCompositeOperation = "source-over";
-          raf = requestAnimationFrame(loop);
-        };
-        raf = requestAnimationFrame(loop);
-        return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
-      }, []);
-      return (
-        <>
-          <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(ellipse_at_top,#142048_0%,#0b1330_35%,#060a1a_65%,#03050d_100%)]" />
-          <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_85%_110%,rgba(232,99,138,0.16),transparent_45%),radial-gradient(circle_at_10%_60%,rgba(212,154,58,0.10),transparent_40%)]" />
-          <canvas ref={ref} className="pointer-events-none fixed inset-0 z-0 h-full w-full" />
-        </>
-      );
-    }
-
-    /* Soft glowing spotlight that follows the cursor (desktop only) */
-    function CursorGlow() {
-      const x = useSpring(-500, { stiffness: 80, damping: 20 }), y = useSpring(-500, { stiffness: 80, damping: 20 });
-      useEffect(() => { const on = (e) => { x.set(e.clientX - 250); y.set(e.clientY - 250); }; window.addEventListener("pointermove", on); return () => window.removeEventListener("pointermove", on); }, []);
-      return <motion.div style={{ x, y }} className="pointer-events-none fixed left-0 top-0 z-[1] hidden h-[500px] w-[500px] rounded-full bg-[radial-gradient(circle,rgba(255,182,193,0.10),transparent_65%)] md:block" />;
-    }
-
-    /* ========================================================================
-       1. MAGIC UNVEILING — dark screen, single glowing heartbeat
-       ======================================================================== */
-    function HeartIcon({ className = "" }) {
-      return (
-        <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
-        </svg>
-      );
-    }
-
-    function Intro({ onOpen }) {
-      return (
-        <motion.div
-          key="intro"
-          onClick={onOpen}
-          role="button"
-          aria-label="Open your surprise"
-          className="fixed inset-0 z-40 flex cursor-pointer select-none flex-col items-center justify-center bg-black px-8 will-change-[opacity]"
-          exit={{ opacity: 0, transition: { duration: 0.95, ease: [0.4, 0, 0.2, 1] } }}
-        >
-          <motion.div className="absolute h-[60vmin] w-[60vmin] rounded-full bg-[radial-gradient(circle,rgba(255,143,171,0.18),transparent_65%)]"
-            animate={{ scale: [1, 1.12, 1, 1.08, 1], opacity: [0.6, 1, 0.6, 0.9, 0.6] }}
-            transition={{ duration: 1.5, repeat: Infinity, times: [0, 0.14, 0.3, 0.44, 1] }} />
-
-          <motion.div
-            exit={{ scale: 2.2, opacity: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }}
-            className="relative will-change-transform"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.4 }}
-              animate={{ opacity: 1, scale: [1, 1.2, 1, 1.12, 1] }}
-              transition={{ opacity: { duration: 1.2 }, scale: { duration: 1.5, repeat: Infinity, times: [0, 0.14, 0.3, 0.44, 1], ease: "easeInOut" } }}
-              className="text-rose-400 drop-shadow-[0_0_25px_rgba(255,143,171,0.9)]"
-            >
-              <HeartIcon className="h-20 w-20 md:h-24 md:w-24" />
-            </motion.div>
-          </motion.div>
-
-          {/* ECG line */}
-          <svg viewBox="0 0 400 60" className="mt-8 w-[min(420px,80vw)] overflow-visible">
-            <motion.path
-              d="M0 30 H150 L162 30 L170 12 L180 50 L190 4 L200 44 L208 30 H400"
-              fill="none" stroke="url(#ecg)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: [0, 1, 1], opacity: [0, 1, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-              style={{ filter: "drop-shadow(0 0 6px rgba(255,143,171,.9))" }}
-            />
-            <defs>
-              <linearGradient id="ecg" x1="0" x2="1"><stop offset="0" stopColor="#ff8fab" stopOpacity="0" /><stop offset=".5" stopColor="#ffb6c1" /><stop offset="1" stopColor="#f5d48c" stopOpacity="0" /></linearGradient>
-            </defs>
-          </svg>
-
-          <motion.p initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 1.2 }}
-            className="mt-8 max-w-xl text-center font-serif text-xl italic leading-relaxed text-rose-100/80 md:text-2xl">
-            For the woman who turned from a stranger on a bus into my family...
-            <span className="mt-2 block not-italic text-gold-300/90">tap anywhere to open your surprise.</span>
-          </motion.p>
-
-          <motion.span initial={{ opacity: 0 }} animate={{ opacity: [0.2, 0.7, 0.2] }} transition={{ delay: 1.8, duration: 2.6, repeat: Infinity }}
-            className="absolute bottom-10 text-[10px] uppercase tracking-[0.5em] text-white/50">touch anywhere</motion.span>
-        </motion.div>
-      );
-    }
-
-    /* ========================================================================
-       HERO — "Happy Birthday, Meri Maa."
-       ======================================================================== */
-    function RevealText({ text, className = "", delay = 0, stagger = 0.04, start = false }) {
-      const words = text.split(" ");
-      let idx = 0;
-      return (
-        <span className={className} aria-label={text}>
-          {words.map((w, wi) => (
-            <span key={wi} className="inline-block whitespace-nowrap" aria-hidden="true">
-              {w.split("").map((ch) => {
-                const i = idx++;
-                return (
-                  <motion.span key={i} className="inline-block will-change-transform"
-                    initial={{ opacity: 0, y: 35, rotateX: 55 }}
-                    animate={start ? { opacity: 1, y: 0, rotateX: 0 } : {}}
-                    transition={{ delay: delay + i * stagger, duration: 0.85, ease: [0.16, 1, 0.3, 1] }}>{ch}</motion.span>
-                );
-              })}
-              {wi < words.length - 1 && <span className="inline-block">&nbsp;</span>}
-            </span>
-          ))}
-        </span>
-      );
-    }
-
-    function Hero({ opened }) {
-      const { scrollY } = useScroll();
-      const y = useTransform(scrollY, [0, 700], [0, 180]);
-      const op = useTransform(scrollY, [0, 500], [1, 0]);
-      return (
-        <section className="relative flex min-h-[100svh] flex-col items-center justify-center overflow-hidden px-5 text-center">
-          <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={opened ? { scale: 1, opacity: 1 } : {}} transition={{ duration: 1.8, ease: "easeOut" }}
-            className="pointer-events-none absolute h-[90vmin] w-[90vmin] rounded-full bg-[radial-gradient(circle,rgba(245,212,140,0.16)_0%,rgba(255,143,171,0.08)_40%,transparent_70%)]" />
-          <motion.div style={{ y, opacity: op }} className="relative [perspective:900px]">
-            <motion.p initial={{ opacity: 0, letterSpacing: "0.2em" }} animate={opened ? { opacity: 1, letterSpacing: "0.55em" } : {}} transition={{ delay: 0.3, duration: 1.5 }}
-              className="mb-6 text-[10px] uppercase text-gold-300/80 md:text-xs">A heartfelt surprise from Manali</motion.p>
-
-            <h1 className="font-serif font-light leading-[0.95] text-rose-50">
-              <RevealText text="Happy Birthday," delay={0.4} start={opened} className="block text-[clamp(2.8rem,10vw,8.5rem)] drop-shadow-[0_0_30px_rgba(255,182,193,0.25)]" />
-              <motion.span
-                initial={{ opacity: 0, y: 35 }}
-                animate={opened ? { opacity: 1, y: 0 } : {}}
-                transition={{ delay: 0.85, duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
-                className="mt-2 block text-[clamp(3.6rem,15vw,12rem)] font-medium italic"
-              >
-                <span className="gold-text drop-shadow-[0_0_40px_rgba(245,212,140,0.35)]">
-                  Meri Maa.
-                </span>
-              </motion.span>
-            </h1>
-
-            <motion.div initial={{ scaleX: 0 }} animate={opened ? { scaleX: 1 } : {}} transition={{ delay: 1.5, duration: 1.2, ease: "easeInOut" }}
-              className="mx-auto mt-8 h-px w-56 bg-gradient-to-r from-transparent via-gold-300 to-transparent" />
-
-            <motion.p initial={{ opacity: 0, y: 16 }} animate={opened ? { opacity: 1, y: 0 } : {}} transition={{ delay: 1.7, duration: 1.2 }}
-              className="mx-auto mt-6 max-w-lg font-serif text-lg italic text-rose-100/75 md:text-2xl">
-              Neeta maa — my chosen family, my healing, my home.
-            </motion.p>
-          </motion.div>
-
-          <motion.div initial={{ opacity: 0 }} animate={opened ? { opacity: 1 } : {}} transition={{ delay: 2.2 }} className="absolute bottom-8 flex flex-col items-center gap-2 text-white/50">
-            <span className="text-[10px] uppercase tracking-[0.45em]">scroll gently</span>
-            <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }} className="h-10 w-px bg-gradient-to-b from-gold-300 to-transparent" />
-          </motion.div>
-        </section>
-      );
-    }
-
-    /* Shared section heading */
-    function SectionTitle({ eyebrow, title, sub }) {
-      return (
-        <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ duration: 1.2, ease: [0.2, 0.65, 0.3, 1] }} className="mb-14 text-center md:mb-20">
-          <p className="mb-4 text-[10px] uppercase tracking-[0.5em] text-gold-300/80 md:text-xs">{eyebrow}</p>
-          <h2 className="font-serif text-4xl font-light text-rose-50 md:text-6xl">{title}</h2>
-          {sub && <p className="mx-auto mt-5 max-w-xl font-serif text-lg italic text-white/55 md:text-xl">{sub}</p>}
-          <div className="mx-auto mt-6 flex items-center justify-center gap-3 text-gold-300/70">
-            <span className="h-px w-12 bg-gradient-to-r from-transparent to-gold-300/70" /><HeartIcon className="h-3 w-3 text-rose-300" /><span className="h-px w-12 bg-gradient-to-l from-transparent to-gold-300/70" />
-          </div>
-        </motion.div>
-      );
-    }
-
-    /* ========================================================================
-       2. INTERACTIVE MEMORY GALLERY
-       ======================================================================== */
-    function TiltCard({ children, className = "", max = 12 }) {
-      const ref = useRef(null);
-      const isTouch = typeof window !== 'undefined' && (window.innerWidth < 768 || 'ontouchstart' in window || navigator.maxTouchPoints > 0);
-      const mx = useMotionValue(0.5), my = useMotionValue(0.5);
-      const rx = useSpring(useTransform(my, [0, 1], [max, -max]), { stiffness: 160, damping: 16 });
-      const ry = useSpring(useTransform(mx, [0, 1], [-max, max]), { stiffness: 160, damping: 16 });
-      const glare = useTransform([mx, my], ([x, y]) => `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,245,225,0.22), transparent 55%)`);
-      const move = (e) => {
-        if (isTouch || !ref.current) return;
-        const r = ref.current.getBoundingClientRect();
-        mx.set((e.clientX - r.left) / r.width);
-        my.set((e.clientY - r.top) / r.height);
-      };
-      const leave = () => { if (!isTouch) { mx.set(0.5); my.set(0.5); } };
-      return (
-        <motion.div ref={ref} onPointerMove={move} onPointerLeave={leave}
-          style={isTouch ? { boxShadow: "0 15px 35px -10px rgba(0,0,0,0.7)" } : { rotateX: rx, rotateY: ry, transformPerspective: 1100, transformStyle: "preserve-3d", boxShadow: "0 0 0px rgba(255,182,193,0), 0 30px 60px -20px rgba(0,0,0,0.8)" }}
-          whileHover={isTouch ? {} : { scale: 1.025, boxShadow: "0 0 20px rgba(255,182,193,0.5), 0 0 70px rgba(255,182,193,0.22), 0 30px 60px -20px rgba(0,0,0,0.8)" }}
-          transition={{ type: "spring", stiffness: 200, damping: 20 }}
-          className={`relative ${className}`}>
-          {children}
-          {!isTouch && <motion.div style={{ background: glare }} className="pointer-events-none absolute inset-0 rounded-[inherit] mix-blend-screen" />}
-        </motion.div>
-      );
-    }
-
-    function PhotoSlot() {
-      const [src, setSrc] = useState(CONFIG.photo);
-      const [failed, setFailed] = useState(false);
-      const input = useRef(null);
-      const choose = (e) => { const f = e.target.files?.[0]; if (f) { setSrc(URL.createObjectURL(f)); setFailed(false); } };
-      const handleImgError = () => {
-        if (src === "neeta.jpg") setSrc("./neeta.jpg");
-        else if (src === "./neeta.jpg") setSrc("/neeta.jpg");
-        else if (src === "/neeta.jpg") setSrc("public/neeta.jpg");
-        else setFailed(true);
-      };
-      return (
-        <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[inherit] bg-midnight-950">
-          {!failed ? (
-            <motion.img src={src} alt="Neeta maa smiling beside her birthday cake" onError={handleImgError}
-              initial={{ scale: 1.15 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ duration: 2.4, ease: "easeOut" }}
-              style={{ objectPosition: "center 22%" }}
-              className="h-full w-full object-cover" />
-          ) : (
-            <button onClick={() => input.current?.click()} className="group flex h-full w-full flex-col items-center justify-center gap-4 bg-[radial-gradient(circle_at_50%_40%,rgba(245,212,140,0.12),rgba(11,19,48,0.9)_70%)] p-8 text-center">
-              <div className="absolute inset-4 rounded-2xl border border-dashed border-gold-300/35 transition group-hover:border-rose-300/70" />
-              <motion.div animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 2.2, repeat: Infinity }} className="text-rose-300 drop-shadow-[0_0_18px_rgba(255,143,171,0.8)]"><HeartIcon className="h-12 w-12" /></motion.div>
-              <p className="font-serif text-2xl italic text-rose-50">Neeta maa's photo</p>
-              <p className="max-w-[16rem] text-xs leading-relaxed text-white/55">Tap to choose her photo, or save it as <span className="text-gold-300">neeta.jpg</span> next to this file.</p>
-            </button>
-          )}
-          <input ref={input} type="file" accept="image/*" className="hidden" onChange={choose} />
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-midnight-950/70 via-transparent to-transparent" />
-        </div>
-      );
-    }
-
-    const CHAPTERS = [
-      { n: "I", title: "A Seat Beside You", text: "Two strangers, one bus ride, and a conversation that quietly changed the course of my life." },
-      { n: "II", title: "Strangers to Family", text: "Somewhere between the stops, you stopped being someone I met and became someone I needed." },
-      { n: "III", title: "Through Every Storm", text: "I watched you survive what tried to break you — and still choose softness, still choose love." },
-      { n: "IV", title: "My Chosen Maa", text: "Not by blood, but by every moment you held my heart as if it were your own." },
-      { n: "V", title: "New Chapters", text: "Here's to healing, to peace, and to the beautiful life that is still waiting for you." },
-    ];
-
-    function Coverflow() {
-      const vw = useWindowWidth();
-      const [active, setActive] = useState(0);
-      const [hover, setHover] = useState(false);
-      const cardW = Math.min(330, vw * 0.74), gap = cardW * (vw < 640 ? 0.5 : 0.66);
-      const go = (d) => setActive((a) => (a + d + CHAPTERS.length) % CHAPTERS.length);
-      useEffect(() => { if (hover) return; const id = setInterval(() => go(1), 5200); return () => clearInterval(id); }, [hover]);
-      return (
-        <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)} className="relative">
-          <motion.div drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.2}
-            onDragEnd={(_, i) => { if (i.offset.x < -50) go(1); else if (i.offset.x > 50) go(-1); }}
-            className="relative mx-auto h-[400px] cursor-grab touch-pan-y active:cursor-grabbing [perspective:1400px]">
-            {CHAPTERS.map((c, i) => {
-              let off = i - active;
-              if (off > CHAPTERS.length / 2) off -= CHAPTERS.length;
-              if (off < -CHAPTERS.length / 2) off += CHAPTERS.length;
-              const abs = Math.abs(off);
-              return (
-                <motion.div key={i} onClick={() => setActive(i)}
-                  animate={{ x: off * gap, rotateY: off * -38, scale: 1 - abs * 0.14, opacity: abs > 2 ? 0 : 1 - abs * 0.3, z: -abs * 120 }}
-                  transition={{ type: "spring", stiffness: 90, damping: 18 }}
-                  style={{ width: cardW, marginLeft: -cardW / 2, zIndex: 10 - abs, transformStyle: "preserve-3d" }}
-                  className="absolute left-1/2 top-0">
-                  <TiltCard max={abs === 0 ? 10 : 0} className="rounded-3xl">
-                    <div className="relative h-[380px] overflow-hidden rounded-3xl border border-white/10 bg-[linear-gradient(160deg,rgba(20,32,72,0.9),rgba(6,10,26,0.95))] p-8 backdrop-blur-xl">
-                      <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-[radial-gradient(circle,rgba(255,143,171,0.25),transparent_70%)]" />
-                      <div className="absolute -bottom-20 -left-10 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(245,212,140,0.18),transparent_70%)]" />
-                      <span className="gold-text relative font-serif text-7xl font-light italic">{c.n}</span>
-                      <h3 className="relative mt-8 font-serif text-3xl text-rose-50">{c.title}</h3>
-                      <div className="relative my-5 h-px w-16 bg-gradient-to-r from-gold-300 to-transparent" />
-                      <p className="relative font-serif text-lg italic leading-relaxed text-white/70">{c.text}</p>
-                      <HeartIcon className="absolute bottom-7 right-7 h-5 w-5 text-rose-300/60" />
-                    </div>
-                  </TiltCard>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-          <div className="mt-8 flex items-center justify-center gap-6">
-            <button onClick={() => go(-1)} aria-label="Previous" className="grid h-11 w-11 place-items-center rounded-full border border-white/15 text-gold-200 transition hover:border-rose-300/70 hover:shadow-[0_0_20px_rgba(255,182,193,0.5)]">‹</button>
-            <div className="flex gap-2">
-              {CHAPTERS.map((_, i) => (
-                <button key={i} onClick={() => setActive(i)} aria-label={`Chapter ${i + 1}`}
-                  className={`h-1.5 rounded-full transition-all duration-500 ${i === active ? "w-8 bg-gold-300 shadow-[0_0_10px_#f5d48c]" : "w-1.5 bg-white/25"}`} />
-              ))}
-            </div>
-            <button onClick={() => go(1)} aria-label="Next" className="grid h-11 w-11 place-items-center rounded-full border border-white/15 text-gold-200 transition hover:border-rose-300/70 hover:shadow-[0_0_20px_rgba(255,182,193,0.5)]">›</button>
-          </div>
-        </div>
-      );
-    }
-
-    function Gallery() {
-      return (
-        <section className="relative px-4 py-16 sm:px-6 sm:py-24 md:py-40">
-          <SectionTitle eyebrow="The Memory Gallery" title="Frames of Us" sub="Every picture of you holds a little piece of my healing." />
-          <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2 md:gap-20">
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 1.0, ease: [0.2, 0.65, 0.3, 1] }} className="relative mx-auto w-full max-w-md">
-              <div className="absolute -inset-4 sm:-inset-6 rounded-[2.5rem] bg-[conic-gradient(from_180deg,rgba(245,212,140,0.35),rgba(255,143,171,0.3),rgba(20,32,72,0.2),rgba(245,212,140,0.35))] opacity-60 blur-xl" />
-              <TiltCard className="rounded-[2rem] border border-gold-300/30 bg-midnight-900 p-3">
-                <div className="overflow-hidden rounded-[1.6rem]"><PhotoSlot /></div>
-                <p className="pb-2 pt-4 text-center font-script text-3xl text-gold-200">My Neeta maa ♥</p>
-              </TiltCard>
-              {[{ c: "-left-4 top-10", d: 0 }, { c: "-right-3 top-1/3", d: 1 }, { c: "left-8 -bottom-5", d: 2 }].map((h, i) => (
-                <div key={i} className={`absolute ${h.c} text-rose-300/80 drop-shadow-[0_0_12px_rgba(255,143,171,0.8)]`}><HeartIcon className="h-5 w-5" /></div>
-              ))}
-            </motion.div>
-
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 1.0, delay: 0.15 }} className="text-center md:text-left">
-              <p className="mb-3 text-[10px] uppercase tracking-[0.5em] text-rose-300/80">Chapter One</p>
-              <h3 className="font-serif text-3xl font-light leading-tight text-rose-50 sm:text-4xl md:text-5xl">The smile that <span className="gold-text">became home</span></h3>
-              <p className="mt-5 font-serif text-lg italic leading-relaxed text-white/70 sm:text-xl">
-                That smile, that glow, that cake dripping with chocolate and gold — this is how I want the whole world to see you, maa: radiant, celebrated, and so deeply loved.
-              </p>
-              <p className="mt-5 text-xs sm:text-sm leading-relaxed text-white/50">You spent years holding everyone else together. Today, let us hold you.</p>
-            </motion.div>
-          </div>
-
-          <div className="mx-auto mt-20 max-w-6xl md:mt-32">
-            <SectionTitle eyebrow="Cinematic Reel" title="Our Story, Frame by Frame" />
-            <Coverflow />
-          </div>
-        </section>
-      );
-    }
-
-    /* ========================================================================
-       3. HEARTBEAT AUDIO PLAYER — vinyl heart + radial visualizer + quotes
-       ======================================================================== */
-    const QUOTE_POS = ["md:left-0 md:top-4", "md:right-0 md:top-20", "md:left-6 md:bottom-16", "md:right-4 md:bottom-2"];
-
-    function VoiceNote() {
-      const audioRef = useRef(null);
-      const canvasRef = useRef(null);
-      const glowRef = useRef(null);
-      const fileRef = useRef(null);
-      const analyserRef = useRef(null), ctxRef = useRef(null), bufRef = useRef(null);
-      const playingRef = useRef(false);
-      const [src, setSrc] = useState(CONFIG.audio);
-      const [missing, setMissing] = useState(false);
-      const [playing, setPlaying] = useState(false);
-      const [time, setTime] = useState(0);
-      const [dur, setDur] = useState(0);
-      const [ended, setEnded] = useState(false);
-
-      const times = useMemo(() => CONFIG.quotes.map((q, i) => (q.at != null ? q.at : dur * (0.04 + (0.9 * i) / CONFIG.quotes.length))), [dur]);
-      const activeIdx = useMemo(() => { if (!dur || (!playing && time === 0)) return -1; let a = -1; times.forEach((t, i) => { if (time >= t) a = i; }); return a; }, [time, times, dur, playing]);
-
-      const setupAnalyser = () => {
-        if (ctxRef.current) return;
-        try {
-          const currentUrl = audioRef.current?.currentSrc || src;
-          const u = new URL(currentUrl, window.location.href);
-          const ok = u.protocol === "blob:" || (window.location.protocol.startsWith("http") && u.origin === window.location.origin);
-          if (!ok) return; // fall back to smooth simulated pulse on file:// or cross-origin
-          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-          if (isMobile) return; // on mobile phones, use rhythmic pulse to avoid audio muting bugs
-          const Ctx = window.AudioContext || window.webkitAudioContext;
-          const ctx = new Ctx();
-          const node = ctx.createMediaElementSource(audioRef.current);
-          const an = ctx.createAnalyser(); an.fftSize = 256; an.smoothingTimeConstant = 0.82;
-          node.connect(an); an.connect(ctx.destination);
-          ctxRef.current = ctx; analyserRef.current = an; bufRef.current = new Uint8Array(an.frequencyBinCount);
-        } catch (e) {
-          console.warn("AudioContext setup notice:", e);
-        }
-      };
-
-      const toggle = async () => {
-        const a = audioRef.current;
-        if (!a) return;
-        if (missing) { fileRef.current?.click(); return; }
-        if (a.paused) {
-          setupAnalyser();
-          try {
-            if (ctxRef.current && ctxRef.current.state === 'suspended') {
-              await ctxRef.current.resume();
-            }
-            await a.play();
-          } catch (e) {
-            console.error("Audio playback error:", e);
-          }
-        } else {
-          a.pause();
-        }
-      };
-
-      const chooseAudio = (e) => {
-        const f = e.target.files?.[0]; if (!f) return;
-        const newUrl = URL.createObjectURL(f);
-        setSrc(newUrl);
-        setMissing(false); setTime(0); setEnded(false);
-        if (audioRef.current) {
-          audioRef.current.src = newUrl;
-          audioRef.current.load();
-          audioRef.current.play().catch(console.error);
-        }
-      };
-
-      useEffect(() => { playingRef.current = playing; }, [playing]);
-
-      // Radial visualizer (real frequencies when available, simulated heartbeat pulse otherwise)
-      useEffect(() => {
-        const c = canvasRef.current;
-        if (!c) return;
-        const ctx = c.getContext("2d");
-        const isMobile = window.innerWidth < 768;
-        const N = isMobile ? 48 : 80, bars = new Float32Array(N);
-        let raf, size = 0, level = 0;
-        const resize = () => {
-          const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
-          size = c.clientWidth;
-          c.width = size * dpr;
-          c.height = size * dpr;
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        };
-        resize(); window.addEventListener("resize", resize);
-        const loop = (t = 0) => {
-          ctx.clearRect(0, 0, size, size);
-          const an = analyserRef.current, on = playingRef.current;
-          if (an && on && bufRef.current) an.getByteFrequencyData(bufRef.current);
-          const beat = Math.pow(Math.max(0, Math.sin(t * 0.0072)), 12) + 0.6 * Math.pow(Math.max(0, Math.sin(t * 0.0072 - 0.9)), 12);
-          let sum = 0;
-          for (let i = 0; i < N; i++) {
-            let v;
-            if (an && on && bufRef.current) { const m = i < N / 2 ? i : N - 1 - i; v = bufRef.current[Math.floor(m * 1.1) + 2] / 255; }
-            else if (on) v = 0.22 + 0.3 * beat + 0.18 * Math.abs(Math.sin(t * 0.003 + i * 0.4) * Math.sin(t * 0.0013 + i * 0.13)) + Math.random() * 0.05;
-            else v = 0.05 + 0.05 * Math.sin(t * 0.002 + i * 0.3) + 0.08 * beat;
-            bars[i] += (v - bars[i]) * 0.25; sum += bars[i];
-          }
-          level += (sum / N - level) * 0.15;
-          const cx = size / 2, R = size * 0.31;
-          ctx.globalCompositeOperation = "lighter";
-          ctx.lineCap = "round";
-          for (let i = 0; i < N; i++) {
-            const ang = (i / N) * Math.PI * 2 - Math.PI / 2, L = 3 + bars[i] * size * 0.16;
-            const mix = (Math.sin(ang * 2 + t * 0.0005) + 1) / 2;
-            const col = `rgba(255,${Math.round(214 - mix * 60)},${Math.round(140 + mix * 40)},${0.35 + bars[i] * 0.65})`;
-            ctx.strokeStyle = col; ctx.lineWidth = Math.max(1.5, size * 0.008);
-            ctx.beginPath(); ctx.moveTo(cx + Math.cos(ang) * R, cx + Math.sin(ang) * R); ctx.lineTo(cx + Math.cos(ang) * (R + L), cx + Math.sin(ang) * (R + L)); ctx.stroke();
-          }
-          ctx.globalCompositeOperation = "source-over";
-          if (glowRef.current) { glowRef.current.style.transform = `scale(${1 + level * 0.8})`; glowRef.current.style.opacity = String(0.35 + level * 1.1); }
-          raf = requestAnimationFrame(loop);
-        };
-        raf = requestAnimationFrame(loop);
-        return () => { cancelAnimationFrame(raf); window.removeEventListener("resize", resize); };
-      }, []);
-
-      const progress = dur ? time / dur : 0;
-      const C = 2 * Math.PI * 48;
-
-      return (
-        <section className="relative px-4 py-20 sm:px-6 sm:py-28 md:py-40">
-          <SectionTitle eyebrow="The Heartbeat" title="A Voice Note, Just for You" sub="Close your eyes, maa. Let my words hold you." />
-
-          <audio ref={audioRef} preload="auto"
-            onLoadedMetadata={(e) => { setDur(e.currentTarget.duration); setMissing(false); }}
-            onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
-            onPlay={() => { setPlaying(true); setEnded(false); }}
-            onPause={() => setPlaying(false)}
-            onEnded={() => {
-              setPlaying(false); setEnded(true);
-              if (canvasRef.current) {
-                const r = canvasRef.current.getBoundingClientRect();
-                FX.pop(r.left + r.width / 2, r.top + r.height / 2, true);
-              }
-            }}
-          >
-            <source src="voice-note.mp3" type="audio/mpeg" />
-            <source src="voice-note.ogg" type="audio/ogg" />
-            <source src="./voice-note.mp3" type="audio/mpeg" />
-            <source src="./voice-note.ogg" type="audio/ogg" />
-            <source src="/voice-note.mp3" type="audio/mpeg" />
-            <source src="/voice-note.ogg" type="audio/ogg" />
-            <source src="public/voice-note.mp3" type="audio/mpeg" />
-            <source src="public/voice-note.ogg" type="audio/ogg" />
-          </audio>
-          <input ref={fileRef} type="file" accept="audio/*" className="hidden" onChange={chooseAudio} />
-
-          <div className="relative mx-auto flex max-w-6xl flex-col items-center md:h-[660px] md:justify-center">
-            {/* Player */}
-            <div className="relative grid h-[280px] w-[280px] place-items-center sm:h-[340px] sm:w-[340px] md:h-[440px] md:w-[440px]">
-              <div ref={glowRef} className="absolute h-[62%] w-[62%] rounded-full bg-[radial-gradient(circle,rgba(255,143,171,0.55),rgba(245,212,140,0.18)_50%,transparent_72%)] blur-2xl transition-[filter]" />
-              <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
-
-              <AnimatePresence>
-                {playing && [0, 1, 2].map((i) => (
-                  <motion.span key={i} className="absolute h-36 w-36 rounded-full border border-rose-300/50 sm:h-44 sm:w-44 md:h-56 md:w-56"
-                    initial={{ scale: 1, opacity: 0.7 }} animate={{ scale: 2.1, opacity: 0 }} exit={{ opacity: 0 }}
-                    transition={{ duration: 2.6, repeat: Infinity, delay: i * 0.85, ease: "easeOut" }} />
-                ))}
-              </AnimatePresence>
-
-              {/* Progress ring */}
-              <svg viewBox="0 0 100 100" className="pointer-events-none absolute h-[11.2rem] w-[11.2rem] -rotate-90 sm:h-[13.5rem] sm:w-[13.5rem] md:h-[16.5rem] md:w-[16.5rem]">
-                <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" />
-                <circle cx="50" cy="50" r="48" fill="none" stroke="url(#pg)" strokeWidth="1.4" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - progress)} style={{ filter: "drop-shadow(0 0 3px #f5d48c)" }} />
-                <defs><linearGradient id="pg"><stop offset="0" stopColor="#f5d48c" /><stop offset="1" stopColor="#ff8fab" /></linearGradient></defs>
-              </svg>
-
-              {/* Vinyl heart button */}
-              <motion.button onClick={toggle} aria-label={playing ? "Pause voice note" : "Play voice note"}
-                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
-                animate={playing ? { scale: 1 } : { scale: [1, 1.05, 1, 1.03, 1] }}
-                transition={playing ? {} : { duration: 1.6, repeat: Infinity, times: [0, 0.14, 0.3, 0.44, 1] }}
-                className="relative h-36 w-36 rounded-full shadow-[0_0_35px_rgba(255,143,171,0.45),0_0_75px_rgba(245,212,140,0.2),inset_0_0_25px_rgba(0,0,0,0.9)] sm:h-44 sm:w-44 md:h-56 md:w-56">
-                <motion.div animate={{ rotate: playing ? 360 : 0 }} transition={playing ? { duration: 5, repeat: Infinity, ease: "linear" } : { duration: 0.8 }}
-                  className="vinyl absolute inset-0 rounded-full border border-gold-300/30">
-                  <div className="absolute inset-[30%] rounded-full bg-[radial-gradient(circle_at_35%_30%,#ffd6df,#ff8fab_45%,#b8862f)] shadow-[0_0_25px_rgba(255,143,171,0.7)]" />
-                  <div className="absolute left-1/2 top-[33%] h-2 w-2 -translate-x-1/2 rounded-full bg-white/70" />
-                </motion.div>
-                <div className="absolute inset-0 grid place-items-center">
-                  <AnimatePresence mode="wait">
-                    <motion.div key={playing ? "p" : "l"} initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ duration: 0.3 }} className="text-midnight-950">
-                      {playing ? (
-                        <svg viewBox="0 0 24 24" className="h-8 w-8 sm:h-9 sm:w-9" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.5" /><rect x="14" y="5" width="4" height="14" rx="1.5" /></svg>
-                      ) : (
-                        <svg viewBox="0 0 24 24" className="ml-1 h-9 w-9 sm:h-10 sm:w-10" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" /></svg>
-                      )}
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </motion.button>
-            </div>
-
-            {/* Controls */}
-            <div className="relative z-10 mt-2 w-full max-w-sm text-center">
-              {missing ? (
-                <button onClick={() => fileRef.current?.click()} className="rounded-full border border-gold-300/40 px-6 py-3 text-xs uppercase tracking-[0.3em] text-gold-200 transition hover:border-rose-300 hover:shadow-[0_0_20px_rgba(255,182,193,0.5)]">
-                  ♥ Add Manali's voice note
-                </button>
-              ) : (
-                <>
-                  <input type="range" className="seek" min="0" max={dur || 0} step="0.1" value={time} style={{ "--p": `${progress * 100}%` }}
-                    onChange={(e) => { const v = +e.target.value; if (audioRef.current) audioRef.current.currentTime = v; setTime(v); }} aria-label="Seek" />
-                  <div className="mt-1 flex justify-between font-sans text-[11px] tracking-widest text-white/45"><span>{fmt(time)}</span><span>{fmt(dur)}</span></div>
-                </>
-              )}
-              <p className="mt-4 font-serif text-base italic text-white/45">
-                {missing ? "Or save it as voice-note.ogg / voice-note.mp3 next to this file." : playing ? "Listening with my whole heart..." : ended ? "Every word, forever yours." : "Tap the heart to hear my voice."}
-              </p>
-            </div>
-
-            {/* Floating quotes */}
-            <div className="mt-8 grid w-full max-w-md gap-4 px-2 md:mt-0 md:block md:max-w-none md:px-0">
-              {CONFIG.quotes.map((q, i) => {
-                const state = ended ? "past" : i === activeIdx ? "active" : i < activeIdx ? "past" : "future";
-                return (
-                  <motion.div key={i}
-                    className={`md:absolute md:w-[280px] lg:w-[320px] ${QUOTE_POS[i % QUOTE_POS.length]}`}
-                    animate={{
-                      opacity: state === "active" ? 1 : state === "past" ? 0.45 : 0.18,
-                      scale: state === "active" ? 1.02 : 0.98,
-                      y: state === "future" ? 10 : 0,
-                    }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}>
-                    <blockquote
-                      className={`relative rounded-2xl border px-5 py-4 text-center font-serif text-lg italic leading-snug transition-colors duration-700 md:px-6 md:py-5 md:text-left md:text-2xl ${state === "active" ? "border-rose-300/40 bg-white/[0.08] text-rose-50 shadow-[0_0_25px_rgba(255,182,193,0.3)]" : "border-white/5 bg-white/[0.02] text-white/70"}`}>
-                      <span className="gold-text absolute -top-3 left-4 font-serif text-4xl not-italic md:-top-4 md:left-5 md:text-5xl">“</span>
-                      {q.text}
-                    </blockquote>
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      );
-    }
-
-    /* ========================================================================
-       4. FINAL BLESSING — typed wishes + hug button
-       ======================================================================== */
-    function Blessing() {
-      const ref = useRef(null), btn = useRef(null);
-      const inView = useInView(ref, { once: true, amount: 0.45 });
-      const [shown, setShown] = useState("");
-      const done = shown.length >= CONFIG.blessing.length;
-
-      useEffect(() => {
-        if (!inView) return;
-        let i = 0, id;
-        const tick = () => {
-          i++; setShown(CONFIG.blessing.slice(0, i));
-          if (i >= CONFIG.blessing.length) return;
-          const ch = CONFIG.blessing[i - 1];
-          id = setTimeout(tick, reduceMotion ? 5 : ch === "." ? 170 : ch === "," || ch === "—" ? 240 : 34);
-        };
-        id = setTimeout(tick, 700);
-        return () => clearTimeout(id);
-      }, [inView]);
-
-      const hug = () => {
-        if (!btn.current) return;
-        const r = btn.current.getBoundingClientRect();
-        FX.pop(r.left + r.width / 2, r.top + r.height / 2, true);
-        FX.rise(14);
-      };
-
-      return (
-        <section ref={ref} className="relative px-4 pb-20 pt-16 sm:px-6 sm:pb-24 sm:pt-28 md:pt-40">
-          <SectionTitle eyebrow="The Final Blessing" title="My Wishes for You" />
-          <div className="relative mx-auto max-w-3xl">
-            <div className="absolute -inset-6 sm:-inset-10 rounded-[3rem] bg-[radial-gradient(ellipse_at_center,rgba(245,212,140,0.14),rgba(255,143,171,0.08)_45%,transparent_72%)] blur-xl" />
-            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.0 }}
-              className="relative rounded-[2rem] border border-gold-300/20 bg-[linear-gradient(160deg,rgba(20,32,72,0.55),rgba(6,10,26,0.7))] px-5 py-8 sm:px-8 sm:py-12 md:px-14 md:py-16 shadow-[0_0_60px_rgba(245,212,140,0.08),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl">
-              <p className="min-h-[14rem] font-serif text-xl font-light leading-relaxed text-rose-50/90 sm:text-2xl md:min-h-[12rem] md:text-[1.9rem]">
-                {shown}{!done && <span className="caret" />}
-              </p>
-              <AnimatePresence>
-                {done && (
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.0 }} className="mt-8 text-center md:mt-10 md:text-right">
-                    <p className="gold-text font-script text-4xl sm:text-5xl md:text-6xl">Forever your Manali</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-
-            <AnimatePresence>
-              {done && (
-                <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 0.8 }} className="mt-10 flex justify-center md:mt-14">
-                  <motion.button ref={btn} onClick={hug} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                    className="group relative overflow-hidden rounded-full border border-rose-300/50 bg-rose-400/10 px-7 py-3.5 sm:px-9 sm:py-4 font-serif text-lg sm:text-xl italic text-rose-50 shadow-[0_0_30px_rgba(255,143,171,0.35)]">
-                    <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
-                    <span className="relative flex items-center gap-3"><HeartIcon className="h-5 w-5 text-rose-300" /> Send Neeta maa a hug</span>
-                  </motion.button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          <motion.footer initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1.5 }} className="mt-20 md:mt-32 text-center">
-            <p className="font-serif text-3xl font-light italic text-rose-50/90 sm:text-4xl md:text-6xl">Happy Birthday, <span className="gold-text">Neeta maa</span></p>
-            <p className="mt-5 text-[10px] uppercase tracking-[0.5em] text-white/35">made with every heartbeat · Manali ♥ Neeta</p>
-          </motion.footer>
-        </section>
-      );
-    }
-
-    /* ========================================================================
-       APP
-       ======================================================================== */
-    function App() {
-      const [opened, setOpened] = useState(false);
-      const [flash, setFlash] = useState(false);
-      const { scrollYProgress } = useScroll();
-
-      const open = (e) => {
-        if (opened) return;
-        const x = e?.clientX ?? innerWidth / 2, y = e?.clientY ?? innerHeight / 2;
-        FX.burst(innerWidth / 2, innerHeight / 2);
-        if (Math.hypot(x - innerWidth / 2, y - innerHeight / 2) > 80) FX.pop(x, y);
-        setFlash(true);
-        setOpened(true);
-        setTimeout(() => {
-          document.body.classList.remove("locked");
-        }, 850);
-        let n = 0; const id = setInterval(() => { FX.rise(2); if (++n > 10) clearInterval(id); }, 450);
-      };
-
-      // tiny heart sparkles wherever she taps, after opening
-      useEffect(() => {
-        if (!opened) return;
-        const on = (e) => { if (e.target.closest("button,input,a")) return; FX.pop(e.clientX, e.clientY); };
-        window.addEventListener("pointerdown", on);
-        return () => window.removeEventListener("pointerdown", on);
-      }, [opened]);
-
-      return (
-        <>
-          <AmbientSky />
-          <CursorGlow />
-          <FXCanvas />
-
-          <AnimatePresence>
-            {!opened && <Intro onOpen={open} />}
-          </AnimatePresence>
-
-          <AnimatePresence>
-            {flash && (
-              <motion.div
-                className="pointer-events-none fixed inset-0 z-[45] bg-[radial-gradient(circle_at_center,rgba(255,236,190,0.7),rgba(255,143,171,0.25)_45%,transparent_75%)]"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.75, 0] }}
-                transition={{ duration: 1.1, times: [0, 0.2, 1], ease: "easeOut" }}
-                onAnimationComplete={() => setFlash(false)}
-              />
-            )}
-          </AnimatePresence>
-
-          <motion.div style={{ scaleX: scrollYProgress }} className="fixed left-0 right-0 top-0 z-50 h-[2px] origin-left bg-gradient-to-r from-gold-400 via-rose-300 to-gold-300 shadow-[0_0_10px_#f5d48c]" />
-
-          <main className={`relative z-10 transition-opacity duration-1000 ${opened ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`}>
-            <Hero opened={opened} />
-            <Gallery />
-            <VoiceNote />
-            <Blessing />
-          </main>
-        </>
-      );
-    }
-
-    createRoot(document.getElementById("root")).render(<App />);
-  </script>
+  <!-- Precompiled ultra-smooth React bundle (Zero runtime Babel overhead) -->
+  <script type="module" src="app.js"></script>
 </body>
 </html>
