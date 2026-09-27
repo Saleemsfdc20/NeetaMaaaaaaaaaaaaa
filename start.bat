@@ -1,5 +1,5 @@
 @echo off
 title Happy Birthday Neeta Maa
 echo Starting Neeta Maa Birthday Surprise...
-node server.js
+node scripts\local-server.js
 pause
