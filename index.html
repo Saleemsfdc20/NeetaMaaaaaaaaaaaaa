@@ -51,13 +51,15 @@
     }
     @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
 
-    /* Film grain for a cinematic texture */
-    .grain::after {
-      content: ""; position: fixed; inset: -50%; pointer-events: none; z-index: 60; opacity: .06;
-      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
-      animation: grain 1.2s steps(6) infinite;
+    /* Film grain for a cinematic texture (desktop only for buttery mobile performance) */
+    @media (min-width: 769px) {
+      .grain::after {
+        content: ""; position: fixed; inset: -50%; pointer-events: none; z-index: 60; opacity: .05;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+        animation: grain 1.2s steps(6) infinite;
+      }
+      @keyframes grain { 0%{transform:translate(0,0)} 25%{transform:translate(-3%,2%)} 50%{transform:translate(2%,-3%)} 75%{transform:translate(-2%,-1%)} 100%{transform:translate(0,0)} }
     }
-    @keyframes grain { 0%{transform:translate(0,0)} 25%{transform:translate(-3%,2%)} 50%{transform:translate(2%,-3%)} 75%{transform:translate(-2%,-1%)} 100%{transform:translate(0,0)} }
 
     /* Vinyl grooves */
     .vinyl {
@@ -187,12 +189,23 @@
       useEffect(() => {
         const c = ref.current, ctx = c.getContext("2d");
         let raf, dpr = 1;
-        const resize = () => { dpr = Math.min(window.devicePixelRatio || 1, 2); c.width = innerWidth * dpr; c.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+        const isMobile = window.innerWidth < 768;
+        const resize = () => {
+          dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
+          c.width = innerWidth * dpr;
+          c.height = innerHeight * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
         resize(); window.addEventListener("resize", resize);
         const loop = () => {
+          const P = FX.p;
+          if (P.length === 0) {
+            ctx.clearRect(0, 0, c.width, c.height);
+            raf = requestAnimationFrame(loop);
+            return;
+          }
           ctx.clearRect(0, 0, c.width, c.height);
           ctx.globalCompositeOperation = "lighter";
-          const P = FX.p;
           for (let i = P.length - 1; i >= 0; i--) {
             const p = P[i]; p.age++;
             if (p.age > p.life) { P.splice(i, 1); continue; }
@@ -201,14 +214,13 @@
             if (p.t === "dust") {
               p.vx *= 0.972; p.vy = p.vy * 0.972 + 0.025; p.x += p.vx; p.y += p.vy;
               const a = (1 - k) * (0.55 + 0.45 * Math.sin(p.age * 0.35 + p.ph));
-              ctx.fillStyle = `rgba(${p.c},${a * 0.12})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 5, 0, 6.283); ctx.fill();
+              ctx.fillStyle = `rgba(${p.c},${a * 0.12})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * 4, 0, 6.283); ctx.fill();
               ctx.fillStyle = `rgba(${p.c},${a})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 6.283); ctx.fill();
             } else if (p.t === "heart") {
               p.vx *= 0.985; p.vy = Math.max(p.vy * 0.99 - 0.012, -1.7);
               p.x += p.vx + Math.sin(p.age * 0.03 + p.ph) * 0.45; p.y += p.vy;
               const fadeIn = Math.min(1, p.age / 18), a = fadeIn * (k < 0.55 ? 1 : 1 - (k - 0.55) / 0.45);
               ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot + Math.sin(p.age * 0.02 + p.ph) * 0.2);
-              ctx.fillStyle = `rgba(${p.c},${a * 0.12})`; heartPath(ctx, p.s * 2); ctx.fill();
               ctx.fillStyle = `rgba(${p.c},${a * 0.75})`; heartPath(ctx, p.s); ctx.fill();
               ctx.restore();
             } else if (p.t === "ring") {
@@ -233,13 +245,16 @@
       useEffect(() => {
         const c = ref.current, ctx = c.getContext("2d");
         let raf, w, h, stars = [], embers = [], shoots = [];
-        const ember = (init) => ({ x: rand(0, w), y: init ? rand(0, h) : h + 10, r: rand(0.6, 2.4), vy: rand(0.15, 0.6), ph: rand(0, 6.28), sw: rand(0.3, 1), c: Math.random() < 0.55 ? pick(GOLDS) : pick(ROSES), a: rand(0.3, 0.85) });
+        const isMobile = window.innerWidth < 768;
+        const ember = (init) => ({ x: rand(0, w), y: init ? rand(0, h) : h + 10, r: rand(0.6, 2.0), vy: rand(0.15, 0.5), ph: rand(0, 6.28), sw: rand(0.3, 1), c: Math.random() < 0.55 ? pick(GOLDS) : pick(ROSES), a: rand(0.3, 0.8) });
         const resize = () => {
-          const dpr = Math.min(window.devicePixelRatio || 1, 2); w = innerWidth; h = innerHeight;
+          const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
+          w = innerWidth; h = innerHeight;
           c.width = w * dpr; c.height = h * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-          const factor = reduceMotion ? 0.35 : 1;
-          stars = Array.from({ length: Math.round((w * h) / 7000 * factor) }, () => ({ x: rand(0, w), y: rand(0, h), r: rand(0.2, 1.3), p: rand(0, 6.28), s: rand(0.4, 1.8) }));
-          embers = Array.from({ length: Math.round(Math.min(110, (w * h) / 14000) * factor) }, () => ember(true));
+          const numStars = isMobile ? 40 : Math.round((w * h) / 7000);
+          const numEmbers = isMobile ? 18 : Math.round(Math.min(90, (w * h) / 14000));
+          stars = Array.from({ length: numStars }, () => ({ x: rand(0, w), y: rand(0, h), r: rand(0.2, 1.2), p: rand(0, 6.28), s: rand(0.4, 1.6) }));
+          embers = Array.from({ length: numEmbers }, () => ember(true));
         };
         resize(); window.addEventListener("resize", resize);
         const loop = (t = 0) => {
@@ -254,10 +269,11 @@
             e.y -= e.vy; e.x += Math.sin(t * 0.0006 * e.sw + e.ph) * 0.35;
             if (e.y < -12) embers[i] = ember(false);
             const fl = e.a * (0.6 + 0.4 * Math.sin(t * 0.004 + e.ph)) * Math.min(1, e.y / (h * 0.25));
-            ctx.fillStyle = `rgba(${e.c},${fl * 0.1})`; ctx.beginPath(); ctx.arc(e.x, e.y, e.r * 5, 0, 6.283); ctx.fill();
-            ctx.fillStyle = `rgba(${e.c},${fl})`; ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, 6.283); ctx.fill();
+            ctx.fillStyle = `rgba(${e.c},${fl * 0.8})`; ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, 6.283); ctx.fill();
           }
-          if (!reduceMotion && Math.random() < 0.006) shoots.push({ x: rand(-0.1 * w, w * 0.8), y: rand(-20, h * 0.35), vx: rand(6, 10), vy: rand(2.5, 4.5), life: rand(50, 80), age: 0 });
+          if (!isMobile && Math.random() < 0.005) {
+            shoots.push({ x: rand(-0.1 * w, w * 0.8), y: rand(-20, h * 0.35), vx: rand(6, 10), vy: rand(2.5, 4.5), life: rand(50, 80), age: 0 });
+          }
           for (let i = shoots.length - 1; i >= 0; i--) {
             const s = shoots[i]; s.age++; s.x += s.vx; s.y += s.vy;
             if (s.age > s.life) { shoots.splice(i, 1); continue; }
@@ -442,25 +458,26 @@
        ======================================================================== */
     function TiltCard({ children, className = "", max = 12 }) {
       const ref = useRef(null);
+      const isTouch = typeof window !== 'undefined' && (window.innerWidth < 768 || 'ontouchstart' in window || navigator.maxTouchPoints > 0);
       const mx = useMotionValue(0.5), my = useMotionValue(0.5);
       const rx = useSpring(useTransform(my, [0, 1], [max, -max]), { stiffness: 160, damping: 16 });
       const ry = useSpring(useTransform(mx, [0, 1], [-max, max]), { stiffness: 160, damping: 16 });
       const glare = useTransform([mx, my], ([x, y]) => `radial-gradient(circle at ${x * 100}% ${y * 100}%, rgba(255,245,225,0.22), transparent 55%)`);
       const move = (e) => {
-        if (!ref.current) return;
+        if (isTouch || !ref.current) return;
         const r = ref.current.getBoundingClientRect();
         mx.set((e.clientX - r.left) / r.width);
         my.set((e.clientY - r.top) / r.height);
       };
-      const leave = () => { mx.set(0.5); my.set(0.5); };
+      const leave = () => { if (!isTouch) { mx.set(0.5); my.set(0.5); } };
       return (
         <motion.div ref={ref} onPointerMove={move} onPointerLeave={leave}
-          style={{ rotateX: rx, rotateY: ry, transformPerspective: 1100, transformStyle: "preserve-3d", boxShadow: "0 0 0px rgba(255,182,193,0), 0 30px 60px -20px rgba(0,0,0,0.8)" }}
-          whileHover={{ scale: 1.025, boxShadow: "0 0 20px rgba(255,182,193,0.5), 0 0 70px rgba(255,182,193,0.22), 0 30px 60px -20px rgba(0,0,0,0.8)" }}
+          style={isTouch ? { boxShadow: "0 15px 35px -10px rgba(0,0,0,0.7)" } : { rotateX: rx, rotateY: ry, transformPerspective: 1100, transformStyle: "preserve-3d", boxShadow: "0 0 0px rgba(255,182,193,0), 0 30px 60px -20px rgba(0,0,0,0.8)" }}
+          whileHover={isTouch ? {} : { scale: 1.025, boxShadow: "0 0 20px rgba(255,182,193,0.5), 0 0 70px rgba(255,182,193,0.22), 0 30px 60px -20px rgba(0,0,0,0.8)" }}
           transition={{ type: "spring", stiffness: 200, damping: 20 }}
           className={`relative ${className}`}>
           {children}
-          <motion.div style={{ background: glare }} className="pointer-events-none absolute inset-0 rounded-[inherit] mix-blend-screen" />
+          {!isTouch && <motion.div style={{ background: glare }} className="pointer-events-none absolute inset-0 rounded-[inherit] mix-blend-screen" />}
         </motion.div>
       );
     }
@@ -559,32 +576,31 @@
 
     function Gallery() {
       return (
-        <section className="relative px-5 py-28 md:py-40">
+        <section className="relative px-4 py-16 sm:px-6 sm:py-24 md:py-40">
           <SectionTitle eyebrow="The Memory Gallery" title="Frames of Us" sub="Every picture of you holds a little piece of my healing." />
-          <div className="mx-auto grid max-w-6xl items-center gap-14 md:grid-cols-2 md:gap-20">
-            <motion.div initial={{ opacity: 0, x: -60, rotate: -4 }} whileInView={{ opacity: 1, x: 0, rotate: -2 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 1.4, ease: [0.2, 0.65, 0.3, 1] }} className="relative mx-auto w-full max-w-md">
-              <div className="absolute -inset-6 rounded-[2.5rem] bg-[conic-gradient(from_180deg,rgba(245,212,140,0.35),rgba(255,143,171,0.3),rgba(20,32,72,0.2),rgba(245,212,140,0.35))] opacity-60 blur-2xl" />
+          <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-2 md:gap-20">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.25 }} transition={{ duration: 1.0, ease: [0.2, 0.65, 0.3, 1] }} className="relative mx-auto w-full max-w-md">
+              <div className="absolute -inset-4 sm:-inset-6 rounded-[2.5rem] bg-[conic-gradient(from_180deg,rgba(245,212,140,0.35),rgba(255,143,171,0.3),rgba(20,32,72,0.2),rgba(245,212,140,0.35))] opacity-60 blur-xl" />
               <TiltCard className="rounded-[2rem] border border-gold-300/30 bg-midnight-900 p-3">
                 <div className="overflow-hidden rounded-[1.6rem]"><PhotoSlot /></div>
                 <p className="pb-2 pt-4 text-center font-script text-3xl text-gold-200">My Neeta maa ♥</p>
               </TiltCard>
-              {[{ c: "-left-5 top-10", d: 0 }, { c: "-right-4 top-1/3", d: 1 }, { c: "left-8 -bottom-6", d: 2 }].map((h, i) => (
-                <motion.div key={i} animate={{ y: [0, -14, 0], rotate: [0, 8, 0] }} transition={{ duration: 4 + i, repeat: Infinity, delay: h.d * 0.6 }}
-                  className={`absolute ${h.c} text-rose-300/80 drop-shadow-[0_0_12px_rgba(255,143,171,0.8)]`}><HeartIcon className="h-5 w-5" /></motion.div>
+              {[{ c: "-left-4 top-10", d: 0 }, { c: "-right-3 top-1/3", d: 1 }, { c: "left-8 -bottom-5", d: 2 }].map((h, i) => (
+                <div key={i} className={`absolute ${h.c} text-rose-300/80 drop-shadow-[0_0_12px_rgba(255,143,171,0.8)]`}><HeartIcon className="h-5 w-5" /></div>
               ))}
             </motion.div>
 
-            <motion.div initial={{ opacity: 0, y: 50 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.4 }} transition={{ duration: 1.3, delay: 0.2 }} className="text-center md:text-left">
-              <p className="mb-4 text-[10px] uppercase tracking-[0.5em] text-rose-300/80">Chapter One</p>
-              <h3 className="font-serif text-4xl font-light leading-tight text-rose-50 md:text-5xl">The smile that <em className="gold-text">became home</em></h3>
-              <p className="mt-6 font-serif text-xl italic leading-relaxed text-white/65">
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.3 }} transition={{ duration: 1.0, delay: 0.15 }} className="text-center md:text-left">
+              <p className="mb-3 text-[10px] uppercase tracking-[0.5em] text-rose-300/80">Chapter One</p>
+              <h3 className="font-serif text-3xl font-light leading-tight text-rose-50 sm:text-4xl md:text-5xl">The smile that <span className="gold-text">became home</span></h3>
+              <p className="mt-5 font-serif text-lg italic leading-relaxed text-white/70 sm:text-xl">
                 That smile, that glow, that cake dripping with chocolate and gold — this is how I want the whole world to see you, maa: radiant, celebrated, and so deeply loved.
               </p>
-              <p className="mt-6 text-sm leading-relaxed text-white/45">You spent years holding everyone else together. Today, let us hold you.</p>
+              <p className="mt-5 text-xs sm:text-sm leading-relaxed text-white/50">You spent years holding everyone else together. Today, let us hold you.</p>
             </motion.div>
           </div>
 
-          <div className="mx-auto mt-32 max-w-6xl">
+          <div className="mx-auto mt-20 max-w-6xl md:mt-32">
             <SectionTitle eyebrow="Cinematic Reel" title="Our Story, Frame by Frame" />
             <Coverflow />
           </div>
@@ -672,9 +688,16 @@
         const c = canvasRef.current;
         if (!c) return;
         const ctx = c.getContext("2d");
-        const N = 96, bars = new Float32Array(N);
+        const isMobile = window.innerWidth < 768;
+        const N = isMobile ? 48 : 80, bars = new Float32Array(N);
         let raf, size = 0, level = 0;
-        const resize = () => { const dpr = Math.min(window.devicePixelRatio || 1, 2); size = c.clientWidth; c.width = size * dpr; c.height = size * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
+        const resize = () => {
+          const dpr = isMobile ? 1 : Math.min(window.devicePixelRatio || 1, 1.75);
+          size = c.clientWidth;
+          c.width = size * dpr;
+          c.height = size * dpr;
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
         resize(); window.addEventListener("resize", resize);
         const loop = (t = 0) => {
           ctx.clearRect(0, 0, size, size);
@@ -685,23 +708,23 @@
           for (let i = 0; i < N; i++) {
             let v;
             if (an && on && bufRef.current) { const m = i < N / 2 ? i : N - 1 - i; v = bufRef.current[Math.floor(m * 1.1) + 2] / 255; }
-            else if (on) v = 0.22 + 0.3 * beat + 0.18 * Math.abs(Math.sin(t * 0.003 + i * 0.4) * Math.sin(t * 0.0013 + i * 0.13)) + Math.random() * 0.06;
+            else if (on) v = 0.22 + 0.3 * beat + 0.18 * Math.abs(Math.sin(t * 0.003 + i * 0.4) * Math.sin(t * 0.0013 + i * 0.13)) + Math.random() * 0.05;
             else v = 0.05 + 0.05 * Math.sin(t * 0.002 + i * 0.3) + 0.08 * beat;
-            bars[i] += (v - bars[i]) * 0.22; sum += bars[i];
+            bars[i] += (v - bars[i]) * 0.25; sum += bars[i];
           }
           level += (sum / N - level) * 0.15;
-          const cx = size / 2, R = size * 0.3;
+          const cx = size / 2, R = size * 0.31;
           ctx.globalCompositeOperation = "lighter";
           ctx.lineCap = "round";
           for (let i = 0; i < N; i++) {
-            const ang = (i / N) * Math.PI * 2 - Math.PI / 2, L = 3 + bars[i] * size * 0.17;
+            const ang = (i / N) * Math.PI * 2 - Math.PI / 2, L = 3 + bars[i] * size * 0.16;
             const mix = (Math.sin(ang * 2 + t * 0.0005) + 1) / 2;
-            const col = `rgba(${Math.round(255)},${Math.round(214 - mix * 70)},${Math.round(140 + mix * 45)},${0.35 + bars[i] * 0.65})`;
-            ctx.strokeStyle = col; ctx.lineWidth = Math.max(1.5, size * 0.007);
+            const col = `rgba(255,${Math.round(214 - mix * 60)},${Math.round(140 + mix * 40)},${0.35 + bars[i] * 0.65})`;
+            ctx.strokeStyle = col; ctx.lineWidth = Math.max(1.5, size * 0.008);
             ctx.beginPath(); ctx.moveTo(cx + Math.cos(ang) * R, cx + Math.sin(ang) * R); ctx.lineTo(cx + Math.cos(ang) * (R + L), cx + Math.sin(ang) * (R + L)); ctx.stroke();
           }
           ctx.globalCompositeOperation = "source-over";
-          if (glowRef.current) { glowRef.current.style.transform = `scale(${1 + level * 0.9})`; glowRef.current.style.opacity = String(0.35 + level * 1.2); }
+          if (glowRef.current) { glowRef.current.style.transform = `scale(${1 + level * 0.8})`; glowRef.current.style.opacity = String(0.35 + level * 1.1); }
           raf = requestAnimationFrame(loop);
         };
         raf = requestAnimationFrame(loop);
@@ -712,7 +735,7 @@
       const C = 2 * Math.PI * 48;
 
       return (
-        <section className="relative px-5 py-28 md:py-40">
+        <section className="relative px-4 py-20 sm:px-6 sm:py-28 md:py-40">
           <SectionTitle eyebrow="The Heartbeat" title="A Voice Note, Just for You" sub="Close your eyes, maa. Let my words hold you." />
 
           <audio ref={audioRef} preload="auto"
@@ -741,20 +764,20 @@
 
           <div className="relative mx-auto flex max-w-6xl flex-col items-center md:h-[660px] md:justify-center">
             {/* Player */}
-            <div className="relative grid h-[330px] w-[330px] place-items-center md:h-[440px] md:w-[440px]">
+            <div className="relative grid h-[280px] w-[280px] place-items-center sm:h-[340px] sm:w-[340px] md:h-[440px] md:w-[440px]">
               <div ref={glowRef} className="absolute h-[62%] w-[62%] rounded-full bg-[radial-gradient(circle,rgba(255,143,171,0.55),rgba(245,212,140,0.18)_50%,transparent_72%)] blur-2xl transition-[filter]" />
               <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
               <AnimatePresence>
                 {playing && [0, 1, 2].map((i) => (
-                  <motion.span key={i} className="absolute h-44 w-44 rounded-full border border-rose-300/50 md:h-56 md:w-56"
+                  <motion.span key={i} className="absolute h-36 w-36 rounded-full border border-rose-300/50 sm:h-44 sm:w-44 md:h-56 md:w-56"
                     initial={{ scale: 1, opacity: 0.7 }} animate={{ scale: 2.1, opacity: 0 }} exit={{ opacity: 0 }}
                     transition={{ duration: 2.6, repeat: Infinity, delay: i * 0.85, ease: "easeOut" }} />
                 ))}
               </AnimatePresence>
 
               {/* Progress ring */}
-              <svg viewBox="0 0 100 100" className="pointer-events-none absolute h-[13.2rem] w-[13.2rem] -rotate-90 md:h-[16.5rem] md:w-[16.5rem]">
+              <svg viewBox="0 0 100 100" className="pointer-events-none absolute h-[11.2rem] w-[11.2rem] -rotate-90 sm:h-[13.5rem] sm:w-[13.5rem] md:h-[16.5rem] md:w-[16.5rem]">
                 <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="0.8" />
                 <circle cx="50" cy="50" r="48" fill="none" stroke="url(#pg)" strokeWidth="1.4" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - progress)} style={{ filter: "drop-shadow(0 0 3px #f5d48c)" }} />
                 <defs><linearGradient id="pg"><stop offset="0" stopColor="#f5d48c" /><stop offset="1" stopColor="#ff8fab" /></linearGradient></defs>
@@ -762,10 +785,10 @@
 
               {/* Vinyl heart button */}
               <motion.button onClick={toggle} aria-label={playing ? "Pause voice note" : "Play voice note"}
-                whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                animate={playing ? { scale: 1 } : { scale: [1, 1.06, 1, 1.04, 1] }}
-                transition={playing ? {} : { duration: 1.5, repeat: Infinity, times: [0, 0.14, 0.3, 0.44, 1] }}
-                className="relative h-44 w-44 rounded-full shadow-[0_0_40px_rgba(255,143,171,0.45),0_0_90px_rgba(245,212,140,0.2),inset_0_0_30px_rgba(0,0,0,0.9)] md:h-56 md:w-56">
+                whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}
+                animate={playing ? { scale: 1 } : { scale: [1, 1.05, 1, 1.03, 1] }}
+                transition={playing ? {} : { duration: 1.6, repeat: Infinity, times: [0, 0.14, 0.3, 0.44, 1] }}
+                className="relative h-36 w-36 rounded-full shadow-[0_0_35px_rgba(255,143,171,0.45),0_0_75px_rgba(245,212,140,0.2),inset_0_0_25px_rgba(0,0,0,0.9)] sm:h-44 sm:w-44 md:h-56 md:w-56">
                 <motion.div animate={{ rotate: playing ? 360 : 0 }} transition={playing ? { duration: 5, repeat: Infinity, ease: "linear" } : { duration: 0.8 }}
                   className="vinyl absolute inset-0 rounded-full border border-gold-300/30">
                   <div className="absolute inset-[30%] rounded-full bg-[radial-gradient(circle_at_35%_30%,#ffd6df,#ff8fab_45%,#b8862f)] shadow-[0_0_25px_rgba(255,143,171,0.7)]" />
@@ -775,9 +798,9 @@
                   <AnimatePresence mode="wait">
                     <motion.div key={playing ? "p" : "l"} initial={{ scale: 0.4, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.4, opacity: 0 }} transition={{ duration: 0.3 }} className="text-midnight-950">
                       {playing ? (
-                        <svg viewBox="0 0 24 24" className="h-9 w-9" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.5" /><rect x="14" y="5" width="4" height="14" rx="1.5" /></svg>
+                        <svg viewBox="0 0 24 24" className="h-8 w-8 sm:h-9 sm:w-9" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.5" /><rect x="14" y="5" width="4" height="14" rx="1.5" /></svg>
                       ) : (
-                        <svg viewBox="0 0 24 24" className="ml-1 h-10 w-10" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" /></svg>
+                        <svg viewBox="0 0 24 24" className="ml-1 h-9 w-9 sm:h-10 sm:w-10" fill="currentColor"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z" /></svg>
                       )}
                     </motion.div>
                   </AnimatePresence>
@@ -804,24 +827,23 @@
             </div>
 
             {/* Floating quotes */}
-            <div className="mt-12 grid w-full max-w-md gap-5 md:mt-0 md:block md:max-w-none">
+            <div className="mt-8 grid w-full max-w-md gap-4 px-2 md:mt-0 md:block md:max-w-none md:px-0">
               {CONFIG.quotes.map((q, i) => {
                 const state = ended ? "past" : i === activeIdx ? "active" : i < activeIdx ? "past" : "future";
                 return (
                   <motion.div key={i}
                     className={`md:absolute md:w-[280px] lg:w-[320px] ${QUOTE_POS[i % QUOTE_POS.length]}`}
                     animate={{
-                      opacity: state === "active" ? 1 : state === "past" ? 0.4 : 0.12,
-                      filter: state === "active" ? "blur(0px)" : state === "past" ? "blur(0.6px)" : "blur(5px)",
-                      scale: state === "active" ? 1.04 : 0.97,
-                      y: state === "future" ? 18 : 0,
+                      opacity: state === "active" ? 1 : state === "past" ? 0.45 : 0.18,
+                      scale: state === "active" ? 1.02 : 0.98,
+                      y: state === "future" ? 10 : 0,
                     }}
-                    transition={{ duration: 1.6, ease: "easeInOut" }}>
-                    <motion.blockquote animate={{ y: [0, -8, 0] }} transition={{ duration: 6 + i, repeat: Infinity, ease: "easeInOut" }}
-                      className={`relative rounded-2xl border px-6 py-5 text-center font-serif text-xl italic leading-snug backdrop-blur-md transition-colors duration-1000 md:text-left md:text-2xl ${state === "active" ? "border-rose-300/40 bg-white/[0.06] text-rose-50 shadow-[0_0_30px_rgba(255,182,193,0.3)]" : "border-white/5 bg-white/[0.02] text-white/80"}`}>
-                      <span className="gold-text absolute -top-4 left-5 font-serif text-5xl not-italic">“</span>
+                    transition={{ duration: 0.8, ease: "easeInOut" }}>
+                    <blockquote
+                      className={`relative rounded-2xl border px-5 py-4 text-center font-serif text-lg italic leading-snug transition-colors duration-700 md:px-6 md:py-5 md:text-left md:text-2xl ${state === "active" ? "border-rose-300/40 bg-white/[0.08] text-rose-50 shadow-[0_0_25px_rgba(255,182,193,0.3)]" : "border-white/5 bg-white/[0.02] text-white/70"}`}>
+                      <span className="gold-text absolute -top-3 left-4 font-serif text-4xl not-italic md:-top-4 md:left-5 md:text-5xl">“</span>
                       {q.text}
-                    </motion.blockquote>
+                    </blockquote>
                   </motion.div>
                 );
               })}
@@ -861,19 +883,19 @@
       };
 
       return (
-        <section ref={ref} className="relative px-5 pb-24 pt-28 md:pt-40">
+        <section ref={ref} className="relative px-4 pb-20 pt-16 sm:px-6 sm:pb-24 sm:pt-28 md:pt-40">
           <SectionTitle eyebrow="The Final Blessing" title="My Wishes for You" />
           <div className="relative mx-auto max-w-3xl">
-            <div className="absolute -inset-10 rounded-[3rem] bg-[radial-gradient(ellipse_at_center,rgba(245,212,140,0.14),rgba(255,143,171,0.08)_45%,transparent_72%)] blur-2xl" />
-            <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.2 }}
-              className="relative rounded-[2rem] border border-gold-300/20 bg-[linear-gradient(160deg,rgba(20,32,72,0.55),rgba(6,10,26,0.7))] px-7 py-12 shadow-[0_0_60px_rgba(245,212,140,0.08),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl md:px-14 md:py-16">
-              <p className="min-h-[14rem] font-serif text-2xl font-light leading-relaxed text-rose-50/90 md:min-h-[12rem] md:text-[1.9rem]">
+            <div className="absolute -inset-6 sm:-inset-10 rounded-[3rem] bg-[radial-gradient(ellipse_at_center,rgba(245,212,140,0.14),rgba(255,143,171,0.08)_45%,transparent_72%)] blur-xl" />
+            <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 1.0 }}
+              className="relative rounded-[2rem] border border-gold-300/20 bg-[linear-gradient(160deg,rgba(20,32,72,0.55),rgba(6,10,26,0.7))] px-5 py-8 sm:px-8 sm:py-12 md:px-14 md:py-16 shadow-[0_0_60px_rgba(245,212,140,0.08),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl">
+              <p className="min-h-[14rem] font-serif text-xl font-light leading-relaxed text-rose-50/90 sm:text-2xl md:min-h-[12rem] md:text-[1.9rem]">
                 {shown}{!done && <span className="caret" />}
               </p>
               <AnimatePresence>
                 {done && (
-                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.4 }} className="mt-10 text-center md:text-right">
-                    <p className="gold-text font-script text-5xl md:text-6xl">Forever your Manali</p>
+                  <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1.0 }} className="mt-8 text-center md:mt-10 md:text-right">
+                    <p className="gold-text font-script text-4xl sm:text-5xl md:text-6xl">Forever your Manali</p>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -881,9 +903,9 @@
 
             <AnimatePresence>
               {done && (
-                <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.8, duration: 1 }} className="mt-14 flex justify-center">
-                  <motion.button ref={btn} onClick={hug} whileHover={{ scale: 1.06 }} whileTap={{ scale: 0.94 }}
-                    className="group relative overflow-hidden rounded-full border border-rose-300/50 bg-rose-400/10 px-9 py-4 font-serif text-xl italic text-rose-50 shadow-[0_0_30px_rgba(255,143,171,0.35)]">
+                <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5, duration: 0.8 }} className="mt-10 flex justify-center md:mt-14">
+                  <motion.button ref={btn} onClick={hug} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                    className="group relative overflow-hidden rounded-full border border-rose-300/50 bg-rose-400/10 px-7 py-3.5 sm:px-9 sm:py-4 font-serif text-lg sm:text-xl italic text-rose-50 shadow-[0_0_30px_rgba(255,143,171,0.35)]">
                     <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />
                     <span className="relative flex items-center gap-3"><HeartIcon className="h-5 w-5 text-rose-300" /> Send Neeta maa a hug</span>
                   </motion.button>
@@ -892,9 +914,9 @@
             </AnimatePresence>
           </div>
 
-          <motion.footer initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 2 }} className="mt-32 text-center">
-            <p className="font-serif text-4xl font-light italic text-rose-50/90 md:text-6xl">Happy Birthday, <span className="gold-text">Neeta maa</span></p>
-            <p className="mt-6 text-[10px] uppercase tracking-[0.5em] text-white/35">made with every heartbeat · Manali ♥ Neeta</p>
+          <motion.footer initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ duration: 1.5 }} className="mt-20 md:mt-32 text-center">
+            <p className="font-serif text-3xl font-light italic text-rose-50/90 sm:text-4xl md:text-6xl">Happy Birthday, <span className="gold-text">Neeta maa</span></p>
+            <p className="mt-5 text-[10px] uppercase tracking-[0.5em] text-white/35">made with every heartbeat · Manali ♥ Neeta</p>
           </motion.footer>
         </section>
       );
