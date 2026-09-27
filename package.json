@@ -1,0 +1,10 @@
+{
+  "name": "neeta-maa-birthday",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Happy Birthday Neeta Maa - A heartfelt celebration from Manali",
+  "scripts": {
+    "start": "node scripts/local-server.js",
+    "build": "echo 'Static deployment ready'"
+  }
+}
